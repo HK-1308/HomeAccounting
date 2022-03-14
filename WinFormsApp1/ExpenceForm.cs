@@ -230,7 +230,8 @@ namespace WinFormsApp1
 
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if ((e.KeyChar >= '0') && (e.KeyChar <= '9'))
+            var pressedKeyIsNumber = ((e.KeyChar >= '0') && (e.KeyChar <= '9'));
+            if (pressedKeyIsNumber)
             {
                 return;
             }

@@ -8,12 +8,12 @@ namespace WinFormsApp1
 {
     public class ExpenceRepository: IExpenceRepository
     {
-        public  List<Account> GetAccountsByUserId(int userId)
+        public async Task<List<Account>> GetAccountsByUserId(int userId)
         {
             List<Account> accounts = new List<Account>();
-            DbConnection.OpenSqlConnection();
-            var sqlDataReader = DbConnection.ExecuteSqlCommandSync(SQLCommands.GetAccountsByUserIdCommand(userId));
-            while (sqlDataReader.Read())
+            await DbConnection.OpenSqlConnection();
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetAccountsByUserIdCommand(userId));
+            while (await sqlDataReader.ReadAsync())
             {
                 Account account = new Account();
                 account.AccountId = Convert.ToInt32(sqlDataReader["AccountId"]);
@@ -21,25 +21,25 @@ namespace WinFormsApp1
                 account.UserId = Convert.ToInt32(sqlDataReader["UserId"]);
                 accounts.Add(account);
             }
-            DbConnection.CloseSqlConnection();
+            await DbConnection.CloseSqlConnection();
             return accounts;
         }
 
         public async Task<int> GetCategoriesCount()
         {
-            DbConnection.OpenSqlConnection();
+            await DbConnection.OpenSqlConnection();
             var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetExpenceCategoriesCountCommand());
             int categoriesCount = Convert.ToInt32(sqlDataReader["Count"]);
-            DbConnection.CloseSqlConnection();
+            await DbConnection.CloseSqlConnection();
             return categoriesCount;
         }
 
         public async Task<decimal> GetMonthlySum(DateTime dateTime, int selectedAccountId)
         {
-            DbConnection.OpenSqlConnection();
+            await DbConnection.OpenSqlConnection();
             var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlySumCommand(dateTime,selectedAccountId));
             decimal monthlySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
-            DbConnection.CloseSqlConnection();
+            await DbConnection.CloseSqlConnection();
             return monthlySum;
         }
         
@@ -50,7 +50,7 @@ namespace WinFormsApp1
             for (int categoryId = 1; categoryId <= expenceCategoriesCount; categoryId++)
             {
                 SummerizedExpensesByCategory summerizedExpensesByCategory = new SummerizedExpensesByCategory();
-                DbConnection.OpenSqlConnection();
+                await DbConnection.OpenSqlConnection();
                 var sqlDataReader = 
                     await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlySummarizedExpensesByCategoryIdCommand(dateTime,selectedAccountId,
                         expenceCategoriesCount,categoryId));
@@ -67,8 +67,8 @@ namespace WinFormsApp1
                         summerizedExpensesByCategory.ExpenceSum = 0;
                     }
                     summerizedExpensesByCategories.Add(summerizedExpensesByCategory);
-                    DbConnection.CloseSqlConnection();
                 }
+                await DbConnection.CloseSqlConnection();
             }
             return summerizedExpensesByCategories;
         }

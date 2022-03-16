@@ -10,13 +10,13 @@ namespace WinFormsApp1
     {
         private static string connectionString = @"Data Source=CMDB-80829;Initial Catalog=BUGALTERIA;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True";
         private static SqlConnection sqlConnection;
-        public static async void OpenSqlConnection()
+        public static async Task OpenSqlConnection()
         {
             sqlConnection = new SqlConnection(connectionString);
             await sqlConnection.OpenAsync();
         }
 
-        public static async void CloseSqlConnection()
+        public static async Task CloseSqlConnection()
         {
             await sqlConnection.CloseAsync();
         }

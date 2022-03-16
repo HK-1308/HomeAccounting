@@ -14,9 +14,9 @@ namespace WinFormsApp1.Controllers
             expenceRepository = new ExpenceRepository();
         }
 
-        public List<Account> GetUserAccounts(int userId)
+        public async Task<List<Account>> GetUserAccounts(int userId)
         {
-            List<Account> accounts = expenceRepository.GetAccountsByUserId(userId);
+            List<Account> accounts = await expenceRepository.GetAccountsByUserId(userId);
             return accounts;
         }
 

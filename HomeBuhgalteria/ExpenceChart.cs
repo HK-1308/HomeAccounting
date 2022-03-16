@@ -30,11 +30,6 @@ namespace WinFormsApp1
             InitializeComponent();
             expenceController = new ExpenceController();
             dateTime = DateTime.Today;
-            comboBox1.Items.AddRange(periods);
-            comboBox1.SelectedIndex = 0;
-            SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
-            FillingAccountsList(CurrentUser.UserId);
-            comboBox2.SelectedIndex = 0;
         }
 
         private void SetCustomFormatForDatetimePicker(string format)
@@ -58,6 +53,12 @@ namespace WinFormsApp1
 
         private async void ExpenceChart_Load(object sender, EventArgs e)
         {
+            comboBox1.Items.AddRange(periods);
+            comboBox1.SelectedIndex = 0;
+            SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
+            await FillingAccountsList(CurrentUser.UserId);
+            comboBox2.SelectedIndex = 0;
+            
             switch (comboBox1.SelectedItem.ToString())
             {
                 case "Month":
@@ -87,108 +88,13 @@ namespace WinFormsApp1
 
         private async Task ShowYearlyExpence()
         {
-            decimal sum  = await CountYearSum();
-            int expenceCategoriesCount = await GetExpenceCategoryCount();
-            sqlDataReader.Close();
-            listBox1FillYearly(sum, expenceCategoriesCount);
-            label1.Text = "Yearly expences:";
+
         }
 
         private async Task ShowDailyExpence()
         {
-            decimal sum  = await CountDaySum();
-            int expenceCategoriesCount = await GetExpenceCategoryCount();
-            sqlDataReader.Close();
-            listBox1FillDayly(sum, expenceCategoriesCount);
-            label1.Text = "Dayly expences:";
-        }
 
-        private async Task<int> GetExpenceCategoryCount()
-        {
-            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT COUNT(*) AS C FROM ExpenceCategories");
-            await sqlDataReader.ReadAsync();          
-            int count = Convert.ToInt32(sqlDataReader["C"]);
-            sqlDataReader.Close();
-            return count;
         }
-
-        private async Task<decimal>  CountMonthSum()
-        {
-            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT SUM(Expences.Expence) AS ALL_SUM"
-                                                                + " FROM Expences " +
-                                                                $"WHERE AccountId = {accountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year}");
-            await sqlDataReader.ReadAsync();
-            return sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
-        }
-
-        private async Task<decimal> CountYearSum()
-        {
-            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT SUM(Expences.Expence) AS ALL_SUM"
-                                                                + " FROM Expences " +
-                                                                $"WHERE AccountId = {accountId} AND YEAR(DateOfExpence) = {dateTime.Year}");
-            await sqlDataReader.ReadAsync();
-            return sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
-        }
-
-        private async Task<decimal> CountDaySum()
-        {
-            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT SUM(Expences.Expence) AS ALL_SUM"
-                                                                + " FROM Expences " +
-                                                                $"WHERE AccountId = {accountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year} AND DAY(DateOfExpence) = {dateTime.Day}");
-            await sqlDataReader.ReadAsync();
-            return sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
-        }
-
-        #region LISTBOXFILLING
-        private async void listBox1FillMonthly(decimal sum,int categoriesCount)
-        {
-            for (int i = 1; i <= categoriesCount; i++)
-            {
-                sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT [CategoryName],SUM(Expences.Expence) AS CAT{i}_SUM "
-                                                                    + "FROM ExpenceCategories " +
-                                                                    $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {accountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year} " +
-                                                                    $"WHERE ExpenceCategories.ExpenceCategoryId = {i} " +
-                                                                    "GROUP BY ExpenceCategories.[CategoryName] ");
-                await sqlDataReader.ReadAsync();
-                if (sqlDataReader[$"CAT{i}_SUM"] is DBNull) listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  0  0%");
-                else listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  {Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"])}  {Math.Round(Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"]) / sum * 100,2)}%");
-                sqlDataReader.Close();
-            }
-        }
-
-        private async void listBox1FillYearly(decimal sum, int categoriesCount)
-        {
-            for (int i = 1; i <= categoriesCount; i++)
-            {
-                sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT [CategoryName],SUM(Expences.Expence) AS CAT{i}_SUM "
-                                                                    + "FROM ExpenceCategories " +
-                                                                    $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {accountId} AND YEAR(DateOfExpence) = {dateTime.Year} " +
-                                                                    $"WHERE ExpenceCategories.ExpenceCategoryId = {i} " +
-                                                                    "GROUP BY ExpenceCategories.[CategoryName] ");
-                await sqlDataReader.ReadAsync();
-                if (sqlDataReader[$"CAT{i}_SUM"] is DBNull) listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  0  0%");
-                else listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  {Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"])}  {Math.Round(Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"]) / sum * 100, 2)}%");
-                sqlDataReader.Close();
-            }
-        }
-
-        private async void listBox1FillDayly(decimal sum, int categoriesCount)
-        {
-            for (int i = 1; i <= categoriesCount; i++)
-            {
-                sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT [CategoryName],SUM(Expences.Expence) AS CAT{i}_SUM "
-                                                                    + "FROM ExpenceCategories " +
-                                                                    $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {accountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year} AND DAY(DateOfExpence) = {dateTime.Day}  " +
-                                                                    $"WHERE ExpenceCategories.ExpenceCategoryId = {i} " +
-                                                                    "GROUP BY ExpenceCategories.[CategoryName] ");
-                await sqlDataReader.ReadAsync();
-                if (sqlDataReader[$"CAT{i}_SUM"] is DBNull) listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  0  0%");
-                else listBox1.Items.Add($"{Convert.ToString(sqlDataReader["CategoryName"])}  {Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"])}  {Math.Round(Convert.ToDecimal(sqlDataReader[$"CAT{i}_SUM"]) / sum * 100, 2)}%");
-                sqlDataReader.Close();
-            }
-        }
-
-        #endregion
 
         private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -215,9 +121,9 @@ namespace WinFormsApp1
 
         }
 
-        private void FillingAccountsList(int userId)
+        private async Task FillingAccountsList(int userId)
         {
-            var accounts = expenceController.GetUserAccounts(userId);
+            var accounts = await expenceController.GetUserAccounts(userId);
             foreach (var account in accounts)
             {
                 comboBox2.Items.Add(account.AccountName);

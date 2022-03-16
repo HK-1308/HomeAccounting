@@ -1,4 +1,6 @@
-﻿namespace WinFormsApp1
+﻿using System;
+
+namespace WinFormsApp1
 {
     public class SQLCommands
     {
@@ -30,7 +32,26 @@
         {
             return $"INSERT INTO [UserSettings] (Theme,Language,UserId) VALUES ('White','ENG',{userId})";
         }
+        
+        public static string GetExpenceCategoriesCountCommand()
+        {
+            return "SELECT COUNT(*) AS [Count] FROM ExpenceCategories";
+        }
 
+        public static string GetMonthlySumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Expences.Expence) AS ALL_SUM"
+                   + " FROM Expences " +
+                   $"WHERE AccountId = {selectedAccountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year}";
+        }
 
+        public static string GetMonthlySummarizedExpensesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int ExpenceCategoriesCount, int categoryId)
+        {
+            return $"SELECT [ExpenceCategories].[ExpenceCategoryId], [CategoryName], SUM(Expences.Expence) AS CAT{categoryId}_SUM "
+                   + "FROM ExpenceCategories " +
+                   $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {selectedAccountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year} " +
+                   $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
+                   "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
+        }
     }
 }

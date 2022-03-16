@@ -28,6 +28,14 @@ namespace WinFormsApp1
             await sqlDataReader.ReadAsync();
             return sqlDataReader;
         }
+        
+        public static SqlDataReader ExecuteSqlCommandSync(string command)
+        {
+            SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
+            var sqlDataReader =  sqlCommand.ExecuteReader();
+            //удалил sqlDataReader.Read(); так как из-за этого пропускалась одна строка при выборке
+            return sqlDataReader;
+        }
 
         public static async Task ExecuteNonQuerySqlCommand(string command)
         {

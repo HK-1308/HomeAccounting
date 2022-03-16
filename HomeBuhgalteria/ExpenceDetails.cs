@@ -9,39 +9,40 @@ using System.Windows.Forms;
 
 namespace WinFormsApp1
 {
-    //TODO: При сохранении криво сохраняет дату
-    public partial class IncomeDetails : Form
+    public partial class ExpenceDetails : Form
     {
         private SqlDataReader sqlDataReader = null;
-        private int incomeId = 0;
-        public IncomeDetails()
+        private int expenceId = 0;
+        public ExpenceDetails()
         {
             InitializeComponent();
         }
 
-        public IncomeDetails(int expenceId)
+        public ExpenceDetails(int expenceId)
         {
-            this.incomeId = expenceId;
+            this.expenceId = expenceId;
             InitializeComponent();
         }
 
-        private async void IncomeDetails_Load(object sender, EventArgs e)
+
+
+        private async void Details_Load(object sender, EventArgs e)
         {
             comboBox3.Hide();
             comboBox4.Hide();
 
-            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT [Income], [Note], [DateOfIncome], [CategoryName], [AccountName]" +
-                                                                 "FROM [Incomes] INNER JOIN [IncomeCategories] ON [IncomeCategories].[IncomeCategoryId] = [Incomes].[IncomeCategoryId]" +
-                                                                 $"INNER JOIN [Accounts] ON [Accounts].[AccountId] = [Incomes].[AccountId] WHERE [IncomeId] = {incomeId}");
+            sqlDataReader = await DbConnection.ExecuteSqlCommand("SELECT [Expence], [Note], [DateOfExpence], [CategoryName], [AccountName]" +
+                                                                 "FROM [Expences] INNER JOIN [ExpenceCategories] ON [ExpenceCategories].[ExpenceCategoryId] = [Expences].[ExpenceCategoryId]" +
+                                                                 $"INNER JOIN [Accounts] ON [Accounts].[AccountId] = [Expences].[AccountId] WHERE [ExpenceId] = {expenceId}");
             await sqlDataReader.ReadAsync();
-            textBox1.Text = Convert.ToString(sqlDataReader["Income"]);
-            dateTimePicker1.Value = Convert.ToDateTime(sqlDataReader["DateOfIncome"]);
+            textBox1.Text = Convert.ToString(sqlDataReader["Expence"]);
+            dateTimePicker1.Value = Convert.ToDateTime(sqlDataReader["DateOfExpence"]);
             textBox3.Text = Convert.ToString(sqlDataReader["Note"]);
             string category = Convert.ToString(sqlDataReader["CategoryName"]);
             string account = Convert.ToString(sqlDataReader["AccountName"]);
             sqlDataReader.Close();
 
-            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT * FROM [Accounts] WHERE [UserId] = {StateClass.CurrentUserId}");
+            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT * FROM [Accounts] WHERE [UserId] = {CurrentUser.UserId}");
             while (await sqlDataReader.ReadAsync())
             {
                 comboBox2.Items.Add(Convert.ToString(sqlDataReader["AccountName"]));
@@ -49,11 +50,11 @@ namespace WinFormsApp1
             }
             sqlDataReader.Close();
 
-            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT * FROM [IncomeCategories]");
+            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT * FROM [ExpenceCategories]");
             while (await sqlDataReader.ReadAsync())
             {
                 comboBox1.Items.Add(Convert.ToString(sqlDataReader["CategoryName"]));
-                comboBox3.Items.Add(Convert.ToString(sqlDataReader["IncomeCategoryId"]));
+                comboBox3.Items.Add(Convert.ToString(sqlDataReader["ExpenceCategoryId"]));
             }
             sqlDataReader.Close();
 
@@ -63,19 +64,24 @@ namespace WinFormsApp1
             comboBox3.SelectedIndex = comboBox1.SelectedIndex;
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            var income = textBox1.Text.Replace(",", ".");
-            await DbConnection.ExecuteNonQuerySqlCommand($"UPDATE [Incomes] SET [Note] = '{textBox3.Text}', [Income] = {income}, [DateOfIncome] = '{dateTimePicker1.Value.Month}.{dateTimePicker1.Value.Day}.{dateTimePicker1.Value.Year} 0:00:00',"
-                                                        + $"[IncomeCategoryId] = {comboBox3.Text}, [AccountId] = {comboBox4.Text} WHERE [IncomeId] = {incomeId}");
-            MessageBox.Show("You save your changes");
             this.Close();
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            await DbConnection.ExecuteNonQuerySqlCommand($"DELETE FROM [Incomes] WHERE [IncomeId] = {incomeId}");
+            await DbConnection.ExecuteNonQuerySqlCommand($"DELETE FROM Expences WHERE ExpenceId = {expenceId}");
             MessageBox.Show("You delete this expence");
+            this.Close();
+        }
+        //10.02.2022 0:00:00
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            var expence = textBox1.Text.Replace(",", ".");
+            await DbConnection.ExecuteNonQuerySqlCommand($"UPDATE [Expences] SET [Note] = '{textBox3.Text}', [Expence] = {expence}, [DateOfExpence] = '{dateTimePicker1.Value.Month}.{dateTimePicker1.Value.Day}.{dateTimePicker1.Value.Year} 0:00:00'," 
+                                                        +$"[ExpenceCategoryId] = {comboBox3.Text}, [AccountId] = {comboBox4.Text} WHERE [ExpenceId] = {expenceId}");
+            MessageBox.Show("You save your changes");
             this.Close();
         }
 
@@ -93,7 +99,7 @@ namespace WinFormsApp1
 
             if (e.KeyChar == ',')
             {
-                if (textBox1.Text.IndexOf(',') != -1)
+                if (textBox2.Text.IndexOf(',') != -1)
                 {
                     e.Handled = true;
                 }
@@ -120,25 +126,9 @@ namespace WinFormsApp1
             comboBox4.SelectedIndex = comboBox2.SelectedIndex;
         }
 
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
 
         }
-
-        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

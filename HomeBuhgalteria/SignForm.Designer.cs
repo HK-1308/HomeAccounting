@@ -1,7 +1,7 @@
 ﻿
 namespace WinFormsApp1
 {
-    partial class Form1
+    partial class SignInForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -101,7 +101,7 @@ namespace WinFormsApp1
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.GoToRegister);
             this.Controls.Add(this.SignIn);
-            this.Name = "Form1";
+            this.Name = "SignInForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);

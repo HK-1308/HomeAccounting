@@ -7,40 +7,52 @@ using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
+using WinFormsApp1.Models;
 
 namespace WinFormsApp1
 {
     public partial class ExpenceChart : Form
     {
-        private SqlDataReader sqlDataReader = null;
+        private SqlDataReader sqlDataReader;
+        private ExpenceController expenceController;
+        
+        private List<Account> accounts;
 
-        private string accountId = "";
-
-        private string periodItem = "";
-
+        private string[] periods = new[] {"Month", "Day", "Year"};
+        
+        private string selectedPeriod;
+        
+        private string accountId;
+        
         private DateTime DateTime;
         public ExpenceChart()
         {
             InitializeComponent();
+            expenceController = new ExpenceController();
+            DateTime = DateTime.Today;
+            comboBox1.Items.AddRange(periods);
+            comboBox1.SelectedIndex = 0;
+            InitializeAccountsList(CurrentUser.UserId);
         }
 
-        public ExpenceChart(string accountId, string periodItem, DateTime dateTime)
+        /*private ExpenceChart(string accountId, TimePeriod timePeriod, DateTime dateTime)
         {
             InitializeComponent();
             comboBox1.Items.AddRange(new string[] {"Month","Day","Year"});
             comboBox1.SelectedIndexChanged -= comboBox1_SelectedIndexChanged;
-            comboBox1.SelectedItem = periodItem;
+            comboBox1.SelectedItem = selectedPeriod;
             this.accountId = accountId;
-            this.periodItem = periodItem;
+            this.timePeriod = timePeriod;
             this.DateTime = dateTime;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-        }
+        }*/
 
         private async void ExpenceChart_Load(object sender, EventArgs e)
         {
-            if (periodItem == "Month") MonthlyRoutine();
-            if (periodItem == "Year") YearRoutine();
-            if (periodItem == "Day") DayRoutine();
+            if (selectedPeriod == "Month") MonthlyRoutine();
+            if (selectedPeriod == "Year") YearRoutine();
+            if (selectedPeriod == "Day") DayRoutine();
         }
 
         private async void MonthlyRoutine()
@@ -168,6 +180,11 @@ namespace WinFormsApp1
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private async Task InitializeAccountsList(int userId)
+        {
+            accounts = await expenceController.GetUserAccounts(userId);
         }
     }
 }

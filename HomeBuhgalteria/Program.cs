@@ -22,8 +22,8 @@ namespace WinFormsApp1
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            DbConnection.SetSqlConnection();
-            Application.Run(new Form1());
+            DbConnection.OpenSqlConnection();
+            Application.Run(new SignInForm());
         }
     }
 }

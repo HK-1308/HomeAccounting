@@ -10,19 +10,26 @@ namespace WinFormsApp1
     {
         private static string connectionString = @"Data Source=CMDB-80829;Initial Catalog=BUGALTERIA;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True";
         private static SqlConnection sqlConnection;
-        public static void SetSqlConnection()
+        public static async void OpenSqlConnection()
         {
             sqlConnection = new SqlConnection(connectionString);
-            sqlConnection.Open();
+            await sqlConnection.OpenAsync();
         }
-        public async static Task<SqlDataReader> ExecuteSqlCommand(string command)
+
+        public static async void CloseSqlConnection()
+        {
+            await sqlConnection.CloseAsync();
+        }
+        
+        public static async Task<SqlDataReader> ExecuteSqlCommand(string command)
         {
             SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
             var sqlDataReader = await sqlCommand.ExecuteReaderAsync();
+            await sqlDataReader.ReadAsync();
             return sqlDataReader;
         }
 
-        public async static Task ExecuteNonQuerySqlCommand(string command)
+        public static async Task ExecuteNonQuerySqlCommand(string command)
         {
             var com = new SqlCommand(command, sqlConnection);
             await com.ExecuteNonQueryAsync();

@@ -53,7 +53,7 @@ namespace WinFormsApp1
 
         private async Task ComboBoxLoad()
         {
-            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT [AccountName] FROM [Accounts] WHERE [UserId] = {StateClass.CurrentUserId}");
+            sqlDataReader = await DbConnection.ExecuteSqlCommand($"SELECT [AccountName] FROM [Accounts] WHERE [UserId] = {CurrentUser.UserId}");
             while (await sqlDataReader.ReadAsync())
             {
                 comboBox1.Items.Add(Convert.ToString(sqlDataReader["AccountName"]));
@@ -82,7 +82,7 @@ namespace WinFormsApp1
                 var expenceCategoryId = Convert.ToInt32(sqlReader["IncomeCategoryId"]);
                 sqlReader.Close();
                 //Получение ID аккаунта трат
-                sqlReader = await DbConnection.ExecuteSqlCommand($"SELECT [AccountId] FROM [Accounts] WHERE [AccountName] = '{Convert.ToString(comboBox1.SelectedItem)}' AND [UserId] = {StateClass.CurrentUserId}");
+                sqlReader = await DbConnection.ExecuteSqlCommand($"SELECT [AccountId] FROM [Accounts] WHERE [AccountName] = '{Convert.ToString(comboBox1.SelectedItem)}' AND [UserId] = {CurrentUser.UserId}");
                 await sqlReader.ReadAsync();
                 var accountId = Convert.ToInt32(sqlReader["AccountId"]);
                 sqlReader.Close();

@@ -45,11 +45,27 @@ namespace WinFormsApp1
                    $"WHERE AccountId = {selectedAccountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year}";
         }
 
-        public static string GetMonthlySummarizedExpensesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int ExpenceCategoriesCount, int categoryId)
+        public static string GetMonthlySummarizedExpensesByCategoryIdCommand(DateTime dateTime,int selectedAccountId,int categoryId)
         {
             return $"SELECT [ExpenceCategories].[ExpenceCategoryId], [CategoryName], SUM(Expences.Expence) AS CAT{categoryId}_SUM "
                    + "FROM ExpenceCategories " +
                    $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {selectedAccountId} AND MONTH(DateOfExpence) = {dateTime.Month} AND YEAR(DateOfExpence) = {dateTime.Year} " +
+                   $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
+                   "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
+        }
+        
+        public static string GetYearlySumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Expences.Expence) AS ALL_SUM"
+                   + " FROM Expences " +
+                   $"WHERE AccountId = {selectedAccountId} AND YEAR(DateOfExpence) = {dateTime.Year}";
+        }
+        
+        public static string GetYearlySummarizedExpensesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int categoryId)
+        {
+            return $"SELECT [ExpenceCategories].[ExpenceCategoryId], [CategoryName], SUM(Expences.Expence) AS CAT{categoryId}_SUM "
+                   + "FROM ExpenceCategories " +
+                   $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {selectedAccountId} AND YEAR(DateOfExpence) = {dateTime.Year} " +
                    $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
                    "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
         }

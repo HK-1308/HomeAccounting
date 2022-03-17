@@ -9,16 +9,17 @@ namespace WinFormsApp1
     static class DbConnection
     {
         private static string connectionString = @"Data Source=CMDB-80829;Initial Catalog=BUGALTERIA;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True";
-        private static SqlConnection sqlConnection;
+        private static SqlConnection sqlConnection = new SqlConnection(connectionString);
         public static async Task OpenSqlConnection()
         {
-            sqlConnection = new SqlConnection(connectionString);
-            await sqlConnection.OpenAsync();
+            if (sqlConnection.State == System.Data.ConnectionState.Closed)
+            { await sqlConnection.OpenAsync(); }
         }
 
         public static async Task CloseSqlConnection()
         {
-            await sqlConnection.CloseAsync();
+            if (sqlConnection.State == System.Data.ConnectionState.Open)
+            { await sqlConnection.CloseAsync(); }
         }
         
         public static async Task<SqlDataReader> ExecuteSqlCommand(string command)

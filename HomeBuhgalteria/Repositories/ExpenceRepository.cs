@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using WinFormsApp1.Interfaces;
 using WinFormsApp1.Models;
@@ -34,6 +35,22 @@ namespace WinFormsApp1
             return categoriesCount;
         }
 
+        private SummerizedExpensesByCategory initializationOfSummerizedExpensesByCategory(SqlDataReader sqlDataReader, int categoryId)
+        {
+            SummerizedExpensesByCategory summerizedExpensesByCategory = new SummerizedExpensesByCategory();
+            summerizedExpensesByCategory.ExpenceCategoryId = Convert.ToInt32(sqlDataReader["ExpenceCategoryId"]);
+            summerizedExpensesByCategory.CategoryName = Convert.ToString(sqlDataReader["CategoryName"]);
+            if (!(sqlDataReader[$"CAT{categoryId}_SUM"] is DBNull))
+            {
+                summerizedExpensesByCategory.ExpenceSum = Convert.ToDecimal(sqlDataReader[$"CAT{categoryId}_SUM"]);
+            }
+            else
+            {
+                summerizedExpensesByCategory.ExpenceSum = 0;
+            }
+            return summerizedExpensesByCategory;
+        }
+        
         public async Task<decimal> GetMonthlySum(DateTime dateTime, int selectedAccountId)
         {
             await DbConnection.OpenSqlConnection();
@@ -49,23 +66,42 @@ namespace WinFormsApp1
                 summerizedExpensesByCategories = new List<SummerizedExpensesByCategory>();
             for (int categoryId = 1; categoryId <= expenceCategoriesCount; categoryId++)
             {
-                SummerizedExpensesByCategory summerizedExpensesByCategory = new SummerizedExpensesByCategory();
                 await DbConnection.OpenSqlConnection();
                 var sqlDataReader = 
-                    await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlySummarizedExpensesByCategoryIdCommand(dateTime,selectedAccountId,
-                        expenceCategoriesCount,categoryId));
+                    await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlySummarizedExpensesByCategoryIdCommand(dateTime, selectedAccountId, categoryId));
                 if (sqlDataReader.HasRows)
                 {
-                    summerizedExpensesByCategory.ExpenceCategoryId = Convert.ToInt32(sqlDataReader["ExpenceCategoryId"]);
-                    summerizedExpensesByCategory.CategoryName = Convert.ToString(sqlDataReader["CategoryName"]);
-                    if (!(sqlDataReader[$"CAT{categoryId}_SUM"] is DBNull))
-                    {
-                        summerizedExpensesByCategory.ExpenceSum = Convert.ToDecimal(sqlDataReader[$"CAT{categoryId}_SUM"]);
-                    }
-                    else
-                    {
-                        summerizedExpensesByCategory.ExpenceSum = 0;
-                    }
+                    SummerizedExpensesByCategory summerizedExpensesByCategory =
+                        initializationOfSummerizedExpensesByCategory(sqlDataReader,categoryId);
+                    summerizedExpensesByCategories.Add(summerizedExpensesByCategory);
+                }
+                await DbConnection.CloseSqlConnection();
+            }
+            return summerizedExpensesByCategories;
+        }
+        
+        public async Task<decimal> GetYearlySum(DateTime dateTime, int selectedAccountId)
+        {
+            await DbConnection.OpenSqlConnection();
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetYearlySumCommand(dateTime,selectedAccountId));
+            decimal yearlySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
+            await DbConnection.CloseSqlConnection();
+            return yearlySum;
+        }
+        
+        public async Task<List<SummerizedExpensesByCategory>> GetYearlySumForEachCategory(DateTime dateTime,int selectedAccountId, int expenceCategoriesCount)
+        {
+            List<SummerizedExpensesByCategory>
+                summerizedExpensesByCategories = new List<SummerizedExpensesByCategory>();
+            for (int categoryId = 1; categoryId <= expenceCategoriesCount; categoryId++)
+            {
+                await DbConnection.OpenSqlConnection();
+                var sqlDataReader = 
+                    await DbConnection.ExecuteSqlCommand(SQLCommands.GetYearlySummarizedExpensesByCategoryIdCommand(dateTime, selectedAccountId, categoryId));
+                if (sqlDataReader.HasRows)
+                {
+                    SummerizedExpensesByCategory summerizedExpensesByCategory =
+                        initializationOfSummerizedExpensesByCategory(sqlDataReader,categoryId);
                     summerizedExpensesByCategories.Add(summerizedExpensesByCategory);
                 }
                 await DbConnection.CloseSqlConnection();

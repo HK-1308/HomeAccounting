@@ -22,7 +22,10 @@ namespace WinFormsApp1.Repositories
                 await DbConnection.CloseSqlConnection();
                 return searchedUser;
             }
-            await DbConnection.CloseSqlConnection();
+            else
+            {
+                await DbConnection.CloseSqlConnection();
+            }
             return null;
         }
 

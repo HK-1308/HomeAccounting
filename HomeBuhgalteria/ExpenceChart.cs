@@ -81,39 +81,50 @@ namespace WinFormsApp1
             List<SummerizedExpensesByCategory> summerizedMonthlyExpences = await expenceController.CollectMonthlyExpenceInfo(dateTime, selectedAccountId);
             foreach (var summerizedMonthlyExpence in summerizedMonthlyExpences)
             {
-                listBox1.Items.Add($"{summerizedMonthlyExpence.CategoryName}   {summerizedMonthlyExpence.ExpencePersent}");
+                listBox1.Items.Add($"{summerizedMonthlyExpence.CategoryName}   {summerizedMonthlyExpence.ExpencePersent}%");
             }
             label1.Text = "Monthly expences:";
         }
 
         private async Task ShowYearlyExpence()
         {
-
+            List<SummerizedExpensesByCategory> summerizedYearlyExpences = await expenceController.CollectYearlyExpenceInfo(dateTime, selectedAccountId);
+            foreach (var summerizedYearlyExpence in summerizedYearlyExpences)
+            {
+                listBox1.Items.Add($"{summerizedYearlyExpence.CategoryName}   {summerizedYearlyExpence.ExpencePersent}%");
+            }
+            label1.Text = "Yearly expences:";
         }
 
         private async Task ShowDailyExpence()
         {
+            List<SummerizedExpensesByCategory> summerizedDailyExpences = await expenceController.CollectDailyExpenceInfo(dateTime, selectedAccountId);
+            foreach (var summerizedDailyExpence in summerizedDailyExpences)
+            {
+                listBox1.Items.Add($"{summerizedDailyExpence.CategoryName}   {summerizedDailyExpence.ExpencePersent}%");
+            }
+            label1.Text = "Daily expences:";
 
         }
 
         private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listBox1.Items.Clear();
-            switch (comboBox1.SelectedItem.ToString())
-            {
-                case "Month":
-                    await ShowMonthlyExpence();
-                    break;
-                case "Year":
-                    await ShowYearlyExpence();
-                    break;
-                case "Day":
-                    await ShowDailyExpence();
-                    break;
-                default:
-                    await ShowMonthlyExpence();
-                    break;
-            }
+            //listBox1.Items.Clear();
+            //switch (comboBox1.SelectedItem.ToString())
+            //{
+            //    case "Month":
+            //        await ShowMonthlyExpence();
+            //        break;
+            //    case "Year":
+            //        await ShowYearlyExpence();
+            //        break;
+            //    case "Day":
+            //        await ShowDailyExpence();
+            //        break;
+            //    default:
+            //        await ShowMonthlyExpence();
+            //        break;
+            //}
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

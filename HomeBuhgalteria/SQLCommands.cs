@@ -69,5 +69,21 @@ namespace WinFormsApp1
                    $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
                    "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
         }
+        
+        public static string GetDailySumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Expences.Expence) AS ALL_SUM"
+                   + " FROM Expences " +
+                   $"WHERE AccountId = {selectedAccountId} AND YEAR(DateOfExpence) = {dateTime.Year} AND MONTH(DateOfExpence) = {dateTime.Month} AND DAY(DateOfExpence)={dateTime.Day}";
+        }
+        
+        public static string GetDailySummarizedExpensesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int categoryId)
+        {
+            return $"SELECT [ExpenceCategories].[ExpenceCategoryId], [CategoryName], SUM(Expences.Expence) AS CAT{categoryId}_SUM "
+                   + "FROM ExpenceCategories " +
+                   $"LEFT JOIN Expences ON ExpenceCategories.ExpenceCategoryId = Expences.ExpenceCategoryId AND AccountId = {selectedAccountId} AND YEAR(DateOfExpence) = {dateTime.Year} AND MONTH(DateOfExpence) = {dateTime.Month} AND DAY(DateOfExpence)={dateTime.Day} " +
+                   $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
+                   "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
+        }
     }
 }

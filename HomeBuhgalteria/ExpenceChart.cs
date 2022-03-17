@@ -15,12 +15,14 @@ namespace WinFormsApp1
         private List<Account> accounts;
 
         private int selectedAccountId;
+
+        private int DEFAULT_INDEX = 0;
         
         private const string MONTHLY_FORMAT = "MMMM yyyy";
         
         private const string YEARLY_FORMAT = "yyyy";
         
-        private const string DAYLY_FORMAT = "dd/MMM/yyyy";
+        private const string DAILY_FORMAT = "dd/MMM/yyyy";
         
         private string[] periods = new[] {"Month", "Day", "Year"};
         
@@ -32,47 +34,37 @@ namespace WinFormsApp1
             dateTime = DateTime.Today;
         }
 
-        private void SetCustomFormatForDatetimePicker(string format)
-        {
-            dateTimePicker1.Format = DateTimePickerFormat.Custom;
-            dateTimePicker1.CustomFormat = format;
-            dateTimePicker1.ShowUpDown = true;
-        }
-
-        /*private ExpenceChart(string accountId, TimePeriod timePeriod, DateTime dateTime)
-        {
-            InitializeComponent();
-            comboBox1.Items.AddRange(new string[] {"Month","Day","Year"});
-            comboBox1.SelectedIndexChanged -= comboBox1_SelectedIndexChanged;
-            comboBox1.SelectedItem = selectedPeriod;
-            this.accountId = accountId;
-            this.timePeriod = timePeriod;
-            this.DateTime = dateTime;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-        }*/
-
         private async void ExpenceChart_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(periods);
-            comboBox1.SelectedIndex = 0;
+            timePeriodComboBox.Items.AddRange(periods);
             SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
             await FillingAccountsList(CurrentUser.UserId);
-            comboBox2.SelectedIndex = 0;
-            
-            switch (comboBox1.SelectedItem.ToString())
+            SetDefaultSelectedIndex();
+            await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
+        }
+        
+        private void SetDefaultSelectedIndex()
+        {
+            timePeriodComboBox.SelectedIndexChanged -= TimePeriodComboBoxSelectedIndexChanged;
+            accountComboBox.SelectedIndexChanged -= AccountComboBoxSelectedIndexChanged;
+            timePeriodComboBox.SelectedIndex = DEFAULT_INDEX;
+            accountComboBox.SelectedIndex = DEFAULT_INDEX;
+            timePeriodComboBox.SelectedIndexChanged += TimePeriodComboBoxSelectedIndexChanged;
+            accountComboBox.SelectedIndexChanged += AccountComboBoxSelectedIndexChanged;
+        }
+        private void SetCustomFormatForDatetimePicker(string format)
+        {
+            dateTimePicker.Format = DateTimePickerFormat.Custom;
+            dateTimePicker.CustomFormat = format;
+            dateTimePicker.ShowUpDown = true;
+        }
+        
+        private async Task FillingAccountsList(int userId)
+        {
+            var accounts = await expenceController.GetUserAccounts(userId);
+            foreach (var account in accounts)
             {
-                case "Month":
-                    await ShowMonthlyExpence();
-                    break;
-                case "Year":
-                    await ShowYearlyExpence();
-                    break;
-                case "Day":
-                    await ShowDailyExpence();
-                    break;
-                default:
-                    await ShowMonthlyExpence();
-                    break;
+                accountComboBox.Items.Add(account.AccountName);
             }
         }
 
@@ -81,7 +73,7 @@ namespace WinFormsApp1
             List<SummerizedExpensesByCategory> summerizedMonthlyExpences = await expenceController.CollectMonthlyExpenceInfo(dateTime, selectedAccountId);
             foreach (var summerizedMonthlyExpence in summerizedMonthlyExpences)
             {
-                listBox1.Items.Add($"{summerizedMonthlyExpence.CategoryName}   {summerizedMonthlyExpence.ExpencePersent}%");
+                mainListBox.Items.Add($"{summerizedMonthlyExpence.CategoryName}   {summerizedMonthlyExpence.ExpencePersent}%");
             }
             label1.Text = "Monthly expences:";
         }
@@ -91,7 +83,7 @@ namespace WinFormsApp1
             List<SummerizedExpensesByCategory> summerizedYearlyExpences = await expenceController.CollectYearlyExpenceInfo(dateTime, selectedAccountId);
             foreach (var summerizedYearlyExpence in summerizedYearlyExpences)
             {
-                listBox1.Items.Add($"{summerizedYearlyExpence.CategoryName}   {summerizedYearlyExpence.ExpencePersent}%");
+                mainListBox.Items.Add($"{summerizedYearlyExpence.CategoryName}   {summerizedYearlyExpence.ExpencePersent}%");
             }
             label1.Text = "Yearly expences:";
         }
@@ -101,49 +93,54 @@ namespace WinFormsApp1
             List<SummerizedExpensesByCategory> summerizedDailyExpences = await expenceController.CollectDailyExpenceInfo(dateTime, selectedAccountId);
             foreach (var summerizedDailyExpence in summerizedDailyExpences)
             {
-                listBox1.Items.Add($"{summerizedDailyExpence.CategoryName}   {summerizedDailyExpence.ExpencePersent}%");
+                mainListBox.Items.Add($"{summerizedDailyExpence.CategoryName}   {summerizedDailyExpence.ExpencePersent}%");
             }
             label1.Text = "Daily expences:";
 
         }
 
-        private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private async void TimePeriodComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            //listBox1.Items.Clear();
-            //switch (comboBox1.SelectedItem.ToString())
-            //{
-            //    case "Month":
-            //        await ShowMonthlyExpence();
-            //        break;
-            //    case "Year":
-            //        await ShowYearlyExpence();
-            //        break;
-            //    case "Day":
-            //        await ShowDailyExpence();
-            //        break;
-            //    default:
-            //        await ShowMonthlyExpence();
-            //        break;
-            //}
+            mainListBox.Items.Clear();
+            await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private async void AccountComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
+            selectedAccountId = accountComboBox.SelectedIndex;
+            mainListBox.Items.Clear();
+            await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
+        }
+        
 
+        private async void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            mainListBox.Items.Clear();
+            dateTime = dateTimePicker.Value;
+            await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
 
-        private async Task FillingAccountsList(int userId)
+        private async Task ShowExpensesByPeriod(string timePeriod)
         {
-            var accounts = await expenceController.GetUserAccounts(userId);
-            foreach (var account in accounts)
+            switch (timePeriod)
             {
-                comboBox2.Items.Add(account.AccountName);
+                case "Month":
+                    SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
+                    await ShowMonthlyExpence();
+                    break;
+                case "Year":
+                    SetCustomFormatForDatetimePicker(YEARLY_FORMAT);
+                    await ShowYearlyExpence();
+                    break;
+                case "Day":
+                    SetCustomFormatForDatetimePicker(DAILY_FORMAT);
+                    await ShowDailyExpence();
+                    break;
+                default:
+                    SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
+                    await ShowMonthlyExpence();
+                    break;
             }
-        }
-
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

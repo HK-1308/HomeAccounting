@@ -22,20 +22,12 @@ namespace WinFormsApp1.Controllers
 
         public async Task<List<SummerizedExpensesByCategory>> CollectMonthlyExpenceInfo(DateTime dateTime, int selectedAccountId)
         {
-            int ExpenceCategoriesCount = await expenceRepository.GetCategoriesCount();
-            decimal MonthlySum = await expenceRepository.GetMonthlySum(dateTime, selectedAccountId);
-            List<SummerizedExpensesByCategory> SummerizedExpenses = await expenceRepository.GetMonthlySumForEachCategory(dateTime,selectedAccountId,ExpenceCategoriesCount);
+            int expenceCategoriesCount = await expenceRepository.GetCategoriesCount();
+            decimal monthlySum = await expenceRepository.GetMonthlySum(dateTime, selectedAccountId);
+            List<SummerizedExpensesByCategory> SummerizedExpenses = await expenceRepository.GetMonthlySumForEachCategory(dateTime,selectedAccountId,expenceCategoriesCount);
             foreach (var SummerizedExpense in SummerizedExpenses)
             {
-                if (MonthlySum != 0)
-                {
-                    SummerizedExpense.ExpencePersent =
-                        Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / MonthlySum * 100, 2);
-                }
-                else
-                {
-                    SummerizedExpense.ExpencePersent = 0;
-                }
+                SummerizedExpense.ExpencePersent = monthlySum != 0 ? Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / monthlySum * 100, 2) : 0;
             }
             return SummerizedExpenses;
         }
@@ -47,35 +39,19 @@ namespace WinFormsApp1.Controllers
             List<SummerizedExpensesByCategory> SummerizedExpenses = await expenceRepository.GetYearlySumForEachCategory(dateTime,selectedAccountId,expenceCategoriesCount);
             foreach (var SummerizedExpense in SummerizedExpenses)
             {
-                if (yearlySum != 0)
-                {
-                    SummerizedExpense.ExpencePersent =
-                        Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / yearlySum * 100, 2);
-                }
-                else
-                {
-                    SummerizedExpense.ExpencePersent = 0;
-                }
+                SummerizedExpense.ExpencePersent = yearlySum != 0 ? Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / yearlySum * 100, 2) : 0;
             }
             return SummerizedExpenses;
         }
         
         public async Task<List<SummerizedExpensesByCategory>> CollectDailyExpenceInfo(DateTime dateTime, int selectedAccountId)
         {
-            int ExpenceCategoriesCount = await expenceRepository.GetCategoriesCount();
-            decimal MonthlySum = await expenceRepository.GetMonthlySum(dateTime, selectedAccountId);
-            List<SummerizedExpensesByCategory> SummerizedExpenses = await expenceRepository.GetMonthlySumForEachCategory(dateTime,selectedAccountId,ExpenceCategoriesCount);
+            int expenceCategoriesCount = await expenceRepository.GetCategoriesCount();
+            decimal dailySum = await expenceRepository.GetDailySum(dateTime, selectedAccountId);
+            List<SummerizedExpensesByCategory> SummerizedExpenses = await expenceRepository.GetDailySumForEachCategory(dateTime,selectedAccountId,expenceCategoriesCount);
             foreach (var SummerizedExpense in SummerizedExpenses)
             {
-                if (MonthlySum != 0)
-                {
-                    SummerizedExpense.ExpencePersent =
-                        Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / MonthlySum * 100, 2);
-                }
-                else
-                {
-                    SummerizedExpense.ExpencePersent = 0;
-                }
+                SummerizedExpense.ExpencePersent = dailySum != 0 ? Math.Round(Convert.ToDecimal(SummerizedExpense.ExpenceSum) / dailySum * 100, 2) : 0;
             }
             return SummerizedExpenses;
         }

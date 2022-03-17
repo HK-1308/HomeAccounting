@@ -29,23 +29,23 @@ namespace WinFormsApp1
         /// </summary>
         private void InitializeComponent()
         {
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.mainListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.timePeriodComboBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.accountComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // listBox1
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(279, 189);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(252, 184);
-            this.listBox1.TabIndex = 0;
+            this.mainListBox.FormattingEnabled = true;
+            this.mainListBox.ItemHeight = 15;
+            this.mainListBox.Location = new System.Drawing.Point(279, 189);
+            this.mainListBox.Name = "mainListBox";
+            this.mainListBox.Size = new System.Drawing.Size(252, 184);
+            this.mainListBox.TabIndex = 0;
             // 
             // label1
             // 
@@ -59,12 +59,12 @@ namespace WinFormsApp1
             // 
             // comboBox1
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(58, 163);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 23);
-            this.comboBox1.TabIndex = 2;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.timePeriodComboBox.FormattingEnabled = true;
+            this.timePeriodComboBox.Location = new System.Drawing.Point(58, 163);
+            this.timePeriodComboBox.Name = "timePeriodComboBox";
+            this.timePeriodComboBox.Size = new System.Drawing.Size(121, 23);
+            this.timePeriodComboBox.TabIndex = 2;
+            this.timePeriodComboBox.SelectedIndexChanged += new System.EventHandler(this.TimePeriodComboBoxSelectedIndexChanged);
             // 
             // label2
             // 
@@ -77,12 +77,12 @@ namespace WinFormsApp1
             // 
             // comboBox2
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(279, 60);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 23);
-            this.comboBox2.TabIndex = 4;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.accountComboBox.FormattingEnabled = true;
+            this.accountComboBox.Location = new System.Drawing.Point(279, 60);
+            this.accountComboBox.Name = "accountComboBox";
+            this.accountComboBox.Size = new System.Drawing.Size(121, 23);
+            this.accountComboBox.TabIndex = 4;
+            this.accountComboBox.SelectedIndexChanged += new System.EventHandler(this.AccountComboBoxSelectedIndexChanged);
             // 
             // label3
             // 
@@ -95,24 +95,24 @@ namespace WinFormsApp1
             // 
             // dateTimePicker1
             // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(566, 200);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(156, 23);
-            this.dateTimePicker1.TabIndex = 7;
-            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
+            this.dateTimePicker.Location = new System.Drawing.Point(566, 200);
+            this.dateTimePicker.Name = "dateTimePicker";
+            this.dateTimePicker.Size = new System.Drawing.Size(156, 23);
+            this.dateTimePicker.TabIndex = 7;
+            this.dateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
             // ExpenceChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(790, 506);
-            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.dateTimePicker);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.accountComboBox);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.timePeriodComboBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.mainListBox);
             this.Name = "ExpenceChart";
             this.Text = "ExpenceChart";
             this.Load += new System.EventHandler(this.ExpenceChart_Load);
@@ -123,12 +123,12 @@ namespace WinFormsApp1
 
         #endregion
 
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox mainListBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox timePeriodComboBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox accountComboBox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker;
     }
 }

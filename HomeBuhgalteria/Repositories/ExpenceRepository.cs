@@ -14,14 +14,14 @@ namespace WinFormsApp1
             List<Account> accounts = new List<Account>();
             await DbConnection.OpenSqlConnection();
             var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetAccountsByUserIdCommand(userId));
-            while (await sqlDataReader.ReadAsync())
+            do
             {
                 Account account = new Account();
                 account.AccountId = Convert.ToInt32(sqlDataReader["AccountId"]);
                 account.AccountName = Convert.ToString(sqlDataReader["AccountName"]);
                 account.UserId = Convert.ToInt32(sqlDataReader["UserId"]);
                 accounts.Add(account);
-            }
+            } while (await sqlDataReader.ReadAsync());
             await DbConnection.CloseSqlConnection();
             return accounts;
         }
@@ -98,6 +98,35 @@ namespace WinFormsApp1
                 await DbConnection.OpenSqlConnection();
                 var sqlDataReader = 
                     await DbConnection.ExecuteSqlCommand(SQLCommands.GetYearlySummarizedExpensesByCategoryIdCommand(dateTime, selectedAccountId, categoryId));
+                if (sqlDataReader.HasRows)
+                {
+                    SummerizedExpensesByCategory summerizedExpensesByCategory =
+                        initializationOfSummerizedExpensesByCategory(sqlDataReader,categoryId);
+                    summerizedExpensesByCategories.Add(summerizedExpensesByCategory);
+                }
+                await DbConnection.CloseSqlConnection();
+            }
+            return summerizedExpensesByCategories;
+        }
+        
+        public async Task<decimal> GetDailySum(DateTime dateTime, int selectedAccountId)
+        {
+            await DbConnection.OpenSqlConnection();
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetDailySumCommand(dateTime,selectedAccountId));
+            decimal dailySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
+            await DbConnection.CloseSqlConnection();
+            return dailySum;
+        }
+        
+        public async Task<List<SummerizedExpensesByCategory>> GetDailySumForEachCategory(DateTime dateTime,int selectedAccountId, int expenceCategoriesCount)
+        {
+            List<SummerizedExpensesByCategory>
+                summerizedExpensesByCategories = new List<SummerizedExpensesByCategory>();
+            for (int categoryId = 1; categoryId <= expenceCategoriesCount; categoryId++)
+            {
+                await DbConnection.OpenSqlConnection();
+                var sqlDataReader = 
+                    await DbConnection.ExecuteSqlCommand(SQLCommands.GetDailySummarizedExpensesByCategoryIdCommand(dateTime, selectedAccountId, categoryId));
                 if (sqlDataReader.HasRows)
                 {
                     SummerizedExpensesByCategory summerizedExpensesByCategory =

@@ -137,5 +137,13 @@ namespace WinFormsApp1
             }
             return summerizedExpensesByCategories;
         }
+
+        public async Task AddNewExpense(string expenceAmount,int ExpenseCategoryId,int AccountId, string note)
+        {
+            await DbConnection.OpenSqlConnection();
+            await DbConnection.ExecuteNonQuerySqlCommand(
+                SQLCommands.AddNewExpenseCommand(expenceAmount, ExpenseCategoryId, AccountId,note));
+            await DbConnection.CloseSqlConnection();
+        }
     }
 }

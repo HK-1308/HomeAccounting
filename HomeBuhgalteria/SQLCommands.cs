@@ -85,5 +85,10 @@ namespace WinFormsApp1
                    $"WHERE ExpenceCategories.ExpenceCategoryId = {categoryId} " +
                    "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
         }
+        
+        public static string AddNewExpenseCommand(string expenceAmount,int ExpenseCategoryId,int AccountId, string note)
+        {
+            return $"INSERT INTO [Expences] ([DateOfExpence], [Note], [Expence], [AccountId], [ExpenceCategoryId]) VALUES (GETDATE(),'{note}',{expenceAmount},{AccountId},{ExpenseCategoryId})";
+        }
     }
 }

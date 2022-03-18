@@ -19,9 +19,7 @@ namespace WinFormsApp1
 
         private void SignIn_Click(object sender, EventArgs e)
         {
-            SignInForm form = new SignInForm();
-            this.Hide();
-            form.Show();
+            FormManager.OpenForm(new SignInForm(),this);
         }
 
         private void Register_Load(object sender, EventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
@@ -13,6 +14,9 @@ namespace WinFormsApp1
         private ExpenceController expenceController;
         
         private List<Account> accounts;
+
+
+        private int selectedExpenseCategoryId;
 
         private int selectedAccountId;
 
@@ -40,6 +44,7 @@ namespace WinFormsApp1
             SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
             await FillingAccountsList(CurrentUser.UserId);
             SetDefaultSelectedIndex();
+            selectedAccountId = accounts.Find(u => u.AccountName == accountComboBox.Text).AccountId;
             await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
         
@@ -61,7 +66,7 @@ namespace WinFormsApp1
         
         private async Task FillingAccountsList(int userId)
         {
-            var accounts = await expenceController.GetUserAccounts(userId);
+            accounts = await expenceController.GetUserAccounts(userId);
             foreach (var account in accounts)
             {
                 accountComboBox.Items.Add(account.AccountName);
@@ -101,27 +106,25 @@ namespace WinFormsApp1
 
         private async void TimePeriodComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            mainListBox.Items.Clear();
             await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
 
         private async void AccountComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            selectedAccountId = accountComboBox.SelectedIndex;
-            mainListBox.Items.Clear();
+            selectedAccountId = accounts.Find(u => u.AccountName == accountComboBox.Text).AccountId;
             await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
         
 
         private async void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            mainListBox.Items.Clear();
             dateTime = dateTimePicker.Value;
             await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
         }
 
         private async Task ShowExpensesByPeriod(string timePeriod)
         {
+            mainListBox.Items.Clear();
             switch (timePeriod)
             {
                 case "Month":
@@ -140,6 +143,58 @@ namespace WinFormsApp1
                     SetCustomFormatForDatetimePicker(MONTHLY_FORMAT);
                     await ShowMonthlyExpence();
                     break;
+            }
+        }
+
+        private void mainListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedExpenseCategoryId = mainListBox.SelectedIndex+1;
+        }
+
+        private void expenseAmount_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void expenseAmount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var pressedKeyIsNumber = ((e.KeyChar >= '0') && (e.KeyChar <= '9'));
+            if (pressedKeyIsNumber)
+            {
+                return;
+            }
+
+            if (e.KeyChar == '.')
+            {
+                e.KeyChar = ',';
+            }
+
+            if (e.KeyChar == ',')
+            {
+                if (expenseAmount.Text.IndexOf(',') != -1)
+                {
+                    e.Handled = true;
+                }
+                return;
+            }
+
+            if (Char.IsControl(e.KeyChar))
+            {
+                if (e.KeyChar == (char)Keys.Enter)
+                    addExpenseButton.Focus();
+                return;
+            }
+
+            e.Handled = true;
+        }
+
+        private async void addExpenseButton_Click(object sender, EventArgs e)
+        {
+            if (expenseAmount.Text != null)
+            {
+                var expenceAmount = expenseAmount.Text.Replace(',','.');
+                await expenceController.AddNewExpense(expenceAmount,selectedExpenseCategoryId,selectedAccountId, note.Text);
+                await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
             }
         }
     }

@@ -56,5 +56,10 @@ namespace WinFormsApp1.Controllers
             return SummerizedExpenses;
         }
         
+        public async Task AddNewExpense(string expenceAmount,int selectedExpenseCategoryId,int selectedAccountId, string note)
+        {
+            await expenceRepository.AddNewExpense(expenceAmount, selectedExpenseCategoryId, selectedAccountId,note);
+        }
+        
     }
 }

@@ -37,10 +37,12 @@ namespace WinFormsApp1
             this.label3 = new System.Windows.Forms.Label();
             this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.addExpenseButton = new System.Windows.Forms.Button();
-            this.expenseAmount = new System.Windows.Forms.TextBox();
-            this.note = new System.Windows.Forms.TextBox();
+            this.expenseAmountTextBox = new System.Windows.Forms.TextBox();
+            this.noteTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // mainListBox
@@ -117,23 +119,23 @@ namespace WinFormsApp1
             this.addExpenseButton.UseVisualStyleBackColor = true;
             this.addExpenseButton.Click += new System.EventHandler(this.addExpenseButton_Click);
             // 
-            // expenseAmount
+            // expenseAmountTextBox
             // 
-            this.expenseAmount.Location = new System.Drawing.Point(557, 164);
-            this.expenseAmount.Multiline = true;
-            this.expenseAmount.Name = "expenseAmount";
-            this.expenseAmount.Size = new System.Drawing.Size(153, 23);
-            this.expenseAmount.TabIndex = 9;
-            this.expenseAmount.TextChanged += new System.EventHandler(this.expenseAmount_TextChanged);
-            this.expenseAmount.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.expenseAmount_KeyPress);
+            this.expenseAmountTextBox.Location = new System.Drawing.Point(557, 164);
+            this.expenseAmountTextBox.Multiline = true;
+            this.expenseAmountTextBox.Name = "expenseAmountTextBox";
+            this.expenseAmountTextBox.Size = new System.Drawing.Size(153, 23);
+            this.expenseAmountTextBox.TabIndex = 9;
+            this.expenseAmountTextBox.TextChanged += new System.EventHandler(this.expenseAmount_TextChanged);
+            this.expenseAmountTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.expenseAmount_KeyPress);
             // 
-            // note
+            // noteTextBox
             // 
-            this.note.Location = new System.Drawing.Point(557, 202);
-            this.note.Multiline = true;
-            this.note.Name = "note";
-            this.note.Size = new System.Drawing.Size(153, 85);
-            this.note.TabIndex = 10;
+            this.noteTextBox.Location = new System.Drawing.Point(557, 202);
+            this.noteTextBox.Multiline = true;
+            this.noteTextBox.Name = "noteTextBox";
+            this.noteTextBox.Size = new System.Drawing.Size(153, 85);
+            this.noteTextBox.TabIndex = 10;
             // 
             // label4
             // 
@@ -153,15 +155,26 @@ namespace WinFormsApp1
             this.label5.TabIndex = 12;
             this.label5.Text = "Amount:";
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(261, 323);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowTemplate.Height = 25;
+            this.dataGridView1.Size = new System.Drawing.Size(240, 150);
+            this.dataGridView1.TabIndex = 13;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
             // ExpenceChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(790, 506);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.note);
-            this.Controls.Add(this.expenseAmount);
+            this.Controls.Add(this.noteTextBox);
+            this.Controls.Add(this.expenseAmountTextBox);
             this.Controls.Add(this.addExpenseButton);
             this.Controls.Add(this.dateTimePicker);
             this.Controls.Add(this.label3);
@@ -173,6 +186,7 @@ namespace WinFormsApp1
             this.Name = "ExpenceChart";
             this.Text = "ExpenceChart";
             this.Load += new System.EventHandler(this.ExpenceChart_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -188,9 +202,10 @@ namespace WinFormsApp1
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DateTimePicker dateTimePicker;
         private System.Windows.Forms.Button addExpenseButton;
-        private System.Windows.Forms.TextBox expenseAmount;
-        private System.Windows.Forms.TextBox note;
+        private System.Windows.Forms.TextBox expenseAmountTextBox;
+        private System.Windows.Forms.TextBox noteTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }

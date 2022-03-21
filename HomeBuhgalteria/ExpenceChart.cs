@@ -75,30 +75,36 @@ namespace WinFormsApp1
 
         private async Task ShowMonthlyExpence()
         {
-            List<SummerizedExpensesByCategory> summerizedMonthlyExpences = await expenceController.CollectMonthlyExpenceInfo(dateTime, selectedAccountId);
-            foreach (var summerizedMonthlyExpence in summerizedMonthlyExpences)
+            decimal summerizedExpensesByPeriod = decimal.Zero;
+            List<SummerizedExpensesByCategory> summerizedMonthlyExpensesByCategory = await expenceController.CollectMonthlyExpenceInfo(dateTime, selectedAccountId);
+            foreach (var summerizedMonthlyExpenseByCategory in summerizedMonthlyExpensesByCategory)
             {
-                mainListBox.Items.Add($"{summerizedMonthlyExpence.CategoryName}   {summerizedMonthlyExpence.ExpencePersent}%");
+                summerizedExpensesByPeriod += summerizedMonthlyExpenseByCategory.ExpenceSum;
+                mainListBox.Items.Add($"{summerizedMonthlyExpenseByCategory.CategoryName}  {summerizedMonthlyExpenseByCategory.ExpenceSum}  {summerizedMonthlyExpenseByCategory.ExpencePersent}%");
             }
             label1.Text = "Monthly expences:";
         }
 
         private async Task ShowYearlyExpence()
         {
-            List<SummerizedExpensesByCategory> summerizedYearlyExpences = await expenceController.CollectYearlyExpenceInfo(dateTime, selectedAccountId);
-            foreach (var summerizedYearlyExpence in summerizedYearlyExpences)
+            decimal summerizedExpensesByPeriod = decimal.Zero;
+            List<SummerizedExpensesByCategory> summerizedYearlyExpensesByCategory = await expenceController.CollectYearlyExpenceInfo(dateTime, selectedAccountId);
+            foreach (var summerizedYearlyExpenseByCategory in summerizedYearlyExpensesByCategory)
             {
-                mainListBox.Items.Add($"{summerizedYearlyExpence.CategoryName}   {summerizedYearlyExpence.ExpencePersent}%");
+                summerizedExpensesByPeriod += summerizedYearlyExpenseByCategory.ExpenceSum;
+                mainListBox.Items.Add($"{summerizedYearlyExpenseByCategory.CategoryName}  {summerizedYearlyExpenseByCategory.ExpenceSum}  {summerizedYearlyExpenseByCategory.ExpencePersent}%");
             }
             label1.Text = "Yearly expences:";
         }
 
         private async Task ShowDailyExpence()
         {
-            List<SummerizedExpensesByCategory> summerizedDailyExpences = await expenceController.CollectDailyExpenceInfo(dateTime, selectedAccountId);
-            foreach (var summerizedDailyExpence in summerizedDailyExpences)
+            decimal summerizedExpensesByPeriod = decimal.Zero;
+            List<SummerizedExpensesByCategory> summerizedDailyExpensesByCategory = await expenceController.CollectDailyExpenceInfo(dateTime, selectedAccountId);
+            foreach (var summerizedDailyExpenseByCategory in summerizedDailyExpensesByCategory)
             {
-                mainListBox.Items.Add($"{summerizedDailyExpence.CategoryName}   {summerizedDailyExpence.ExpencePersent}%");
+                summerizedExpensesByPeriod += summerizedDailyExpenseByCategory.ExpenceSum;
+                mainListBox.Items.Add($"{summerizedDailyExpenseByCategory.CategoryName}  {summerizedDailyExpenseByCategory.ExpenceSum}  {summerizedDailyExpenseByCategory.ExpencePersent}%");
             }
             label1.Text = "Daily expences:";
 
@@ -171,7 +177,7 @@ namespace WinFormsApp1
 
             if (e.KeyChar == ',')
             {
-                if (expenseAmount.Text.IndexOf(',') != -1)
+                if (expenseAmountTextBox.Text.IndexOf(',') != -1)
                 {
                     e.Handled = true;
                 }
@@ -190,12 +196,17 @@ namespace WinFormsApp1
 
         private async void addExpenseButton_Click(object sender, EventArgs e)
         {
-            if (expenseAmount.Text != null)
+            if (expenseAmountTextBox.Text != null)
             {
-                var expenceAmount = expenseAmount.Text.Replace(',','.');
-                await expenceController.AddNewExpense(expenceAmount,selectedExpenseCategoryId,selectedAccountId, note.Text);
+                var expenseAmount = expenseAmountTextBox.Text.Replace(',','.');
+                await expenceController.AddNewExpense(expenseAmount,selectedExpenseCategoryId,selectedAccountId, noteTextBox.Text);
                 await ShowExpensesByPeriod(timePeriodComboBox.SelectedItem.ToString());
             }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

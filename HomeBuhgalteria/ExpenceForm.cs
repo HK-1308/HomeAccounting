@@ -217,7 +217,7 @@ namespace WinFormsApp1
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             
-            IncomeForm incomeForm = new IncomeForm();
+            IncomeChart incomeForm = new IncomeChart();
             this.Close();
             incomeForm.Show();
         }

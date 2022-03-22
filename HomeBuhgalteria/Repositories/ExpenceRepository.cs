@@ -9,21 +9,20 @@ namespace WinFormsApp1
 {
     public class ExpenceRepository: IExpenceRepository
     {
-        public async Task<List<Account>> GetAccountsByUserId(int userId)
+        public async Task<List<ExpenseCategory>> GetCategories()
         {
-            List<Account> accounts = new List<Account>();
+            List<ExpenseCategory> categories = new List<ExpenseCategory>();
             await DbConnection.OpenSqlConnection();
-            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetAccountsByUserIdCommand(userId));
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetExpenseCategories());
             do
             {
-                Account account = new Account();
-                account.AccountId = Convert.ToInt32(sqlDataReader["AccountId"]);
-                account.AccountName = Convert.ToString(sqlDataReader["AccountName"]);
-                account.UserId = Convert.ToInt32(sqlDataReader["UserId"]);
-                accounts.Add(account);
+                ExpenseCategory category = new ExpenseCategory();
+                category.ExpenseCategoryId = Convert.ToInt32(sqlDataReader["ExpenceCategoryId"]);
+                category.CategoryName = Convert.ToString(sqlDataReader["CategoryName"]);
+                categories.Add(category);
             } while (await sqlDataReader.ReadAsync());
             await DbConnection.CloseSqlConnection();
-            return accounts;
+            return categories;
         }
 
         public async Task<int> GetCategoriesCount()
@@ -54,7 +53,7 @@ namespace WinFormsApp1
         public async Task<decimal> GetMonthlySum(DateTime dateTime, int selectedAccountId)
         {
             await DbConnection.OpenSqlConnection();
-            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlySumCommand(dateTime,selectedAccountId));
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetMonthlyExpensesSumCommand(dateTime,selectedAccountId));
             decimal monthlySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
             await DbConnection.CloseSqlConnection();
             return monthlySum;
@@ -83,7 +82,7 @@ namespace WinFormsApp1
         public async Task<decimal> GetYearlySum(DateTime dateTime, int selectedAccountId)
         {
             await DbConnection.OpenSqlConnection();
-            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetYearlySumCommand(dateTime,selectedAccountId));
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetYearlyExpensesSumCommand(dateTime,selectedAccountId));
             decimal yearlySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
             await DbConnection.CloseSqlConnection();
             return yearlySum;
@@ -112,7 +111,7 @@ namespace WinFormsApp1
         public async Task<decimal> GetDailySum(DateTime dateTime, int selectedAccountId)
         {
             await DbConnection.OpenSqlConnection();
-            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetDailySumCommand(dateTime,selectedAccountId));
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetDailyExpensesSumCommand(dateTime,selectedAccountId));
             decimal dailySum = sqlDataReader["ALL_SUM"] is DBNull ? 0 : Convert.ToDecimal(sqlDataReader["ALL_SUM"]);
             await DbConnection.CloseSqlConnection();
             return dailySum;

@@ -14,12 +14,12 @@ namespace WinFormsApp1.Controllers
             expenceRepository = new ExpenceRepository();
         }
 
-        public async Task<List<Account>> GetUserAccounts(int userId)
+        public async Task<List<ExpenseCategory>> GetCategories()
         {
-            List<Account> accounts = await expenceRepository.GetAccountsByUserId(userId);
-            return accounts;
+            List<ExpenseCategory> categories = await expenceRepository.GetCategories();
+            return categories;
         }
-
+        
         public async Task<List<SummerizedExpensesByCategory>> CollectMonthlyExpenceInfo(DateTime dateTime, int selectedAccountId)
         {
             int expenceCategoriesCount = await expenceRepository.GetCategoriesCount();

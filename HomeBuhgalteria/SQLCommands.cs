@@ -38,7 +38,7 @@ namespace WinFormsApp1
             return "SELECT COUNT(*) AS [Count] FROM ExpenceCategories";
         }
 
-        public static string GetMonthlySumCommand(DateTime dateTime, int selectedAccountId)
+        public static string GetMonthlyExpensesSumCommand(DateTime dateTime, int selectedAccountId)
         {
             return "SELECT SUM(Expences.Expence) AS ALL_SUM"
                    + " FROM Expences " +
@@ -54,7 +54,7 @@ namespace WinFormsApp1
                    "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
         }
         
-        public static string GetYearlySumCommand(DateTime dateTime, int selectedAccountId)
+        public static string GetYearlyExpensesSumCommand(DateTime dateTime, int selectedAccountId)
         {
             return "SELECT SUM(Expences.Expence) AS ALL_SUM"
                    + " FROM Expences " +
@@ -70,7 +70,7 @@ namespace WinFormsApp1
                    "GROUP BY [ExpenceCategories].[CategoryName], [ExpenceCategories].[ExpenceCategoryId]";
         }
         
-        public static string GetDailySumCommand(DateTime dateTime, int selectedAccountId)
+        public static string GetDailyExpensesSumCommand(DateTime dateTime, int selectedAccountId)
         {
             return "SELECT SUM(Expences.Expence) AS ALL_SUM"
                    + " FROM Expences " +
@@ -90,5 +90,74 @@ namespace WinFormsApp1
         {
             return $"INSERT INTO [Expences] ([DateOfExpence], [Note], [Expence], [AccountId], [ExpenceCategoryId]) VALUES (GETDATE(),'{note}',{expenceAmount},{AccountId},{ExpenseCategoryId})";
         }
+        
+        public static string GetExpenseCategories()
+        {
+            return "SELECT * FROM [ExpenceCategories]";
+        }
+        
+        public static string GetIncomeCategories()
+        {
+            return "SELECT * FROM [IncomeCategories]";
+        }
+        
+        public static string GetIncomeCategoriesCountCommand()
+        {
+            return "SELECT COUNT(*) AS [Count] FROM IncomeCategories";
+        }
+        
+        public static string GetMonthlyIncomesSumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Incomes.Income) AS ALL_SUM"
+                   + " FROM Incomes " +
+                   $"WHERE AccountId = {selectedAccountId} AND MONTH(DateOfIncome) = {dateTime.Month} AND YEAR(DateOfIncome) = {dateTime.Year}";
+        }
+
+        public static string GetMonthlySummarizedIncomesByCategoryIdCommand(DateTime dateTime,int selectedAccountId,int categoryId)
+        {
+            return $"SELECT [IncomeCategories].[IncomeCategoryId], [CategoryName], SUM(Incomes.Income) AS CAT{categoryId}_SUM "
+                   + "FROM IncomeCategories " +
+                   $"LEFT JOIN Incomes ON IncomeCategories.IncomeCategoryId = Incomes.IncomeCategoryId AND AccountId = {selectedAccountId} AND MONTH(DateOfIncome) = {dateTime.Month} AND YEAR(DateOfIncome) = {dateTime.Year} " +
+                   $"WHERE IncomeCategories.IncomeCategoryId = {categoryId} " +
+                   "GROUP BY [IncomeCategories].[CategoryName], [IncomeCategories].[IncomeCategoryId]";
+        }
+        
+        public static string GetYearlyIncomesSumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Incomes.Income) AS ALL_SUM"
+                   + " FROM Incomes " +
+                   $"WHERE AccountId = {selectedAccountId} AND YEAR(DateOfIncome) = {dateTime.Year}";
+        }
+        
+        public static string GetYearlySummarizedIncomesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int categoryId)
+        {
+            return $"SELECT [IncomeCategories].[IncomeCategoryId], [CategoryName], SUM(Incomes.Income) AS CAT{categoryId}_SUM "
+                   + "FROM IncomeCategories " +
+                   $"LEFT JOIN Incomes ON IncomeCategories.IncomeCategoryId = Incomes.IncomeCategoryId AND AccountId = {selectedAccountId} AND YEAR(DateOfIncome) = {dateTime.Year} " +
+                   $"WHERE IncomeCategories.IncomeCategoryId = {categoryId} " +
+                   "GROUP BY [IncomeCategories].[CategoryName], [IncomeCategories].[IncomeCategoryId]";
+        }
+        
+        public static string GetDailyIncomesSumCommand(DateTime dateTime, int selectedAccountId)
+        {
+            return "SELECT SUM(Incomes.Income) AS ALL_SUM"
+                   + " FROM Incomes " +
+                   $"WHERE AccountId = {selectedAccountId} AND YEAR(DateOfIncome) = {dateTime.Year} AND MONTH(DateOfIncome) = {dateTime.Month} AND DAY(DateOfIncome)={dateTime.Day}";
+        }
+        
+        public static string GetDailySummarizedIncomesByCategoryIdCommand(DateTime dateTime,int selectedAccountId, int categoryId)
+        {
+            return $"SELECT [IncomeCategories].[IncomeCategoryId], [CategoryName], SUM(Incomes.Income) AS CAT{categoryId}_SUM "
+                   + "FROM IncomeCategories " +
+                   $"LEFT JOIN Incomes ON IncomeCategories.IncomeCategoryId = Incomes.IncomeCategoryId AND AccountId = {selectedAccountId} AND YEAR(DateOfIncome) = {dateTime.Year} AND MONTH(DateOfIncome) = {dateTime.Month} AND DAY(DateOfIncome)={dateTime.Day} " +
+                   $"WHERE IncomeCategories.IncomeCategoryId = {categoryId} " +
+                   "GROUP BY [IncomeCategories].[CategoryName], [IncomeCategories].[IncomeCategoryId]";
+        }
+        
+        public static string AddNewIncomeCommand(string incomeAmount,int incomeCategoryId,int AccountId, string note)
+        {
+            return $"INSERT INTO [Incomes] ([DateOfIncome], [Note], [Income], [AccountId], [IncomeCategoryId]) VALUES (GETDATE(),'{note}',{incomeAmount},{AccountId},{incomeCategoryId})";
+        }
+        
     }
 }

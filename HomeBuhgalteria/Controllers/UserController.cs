@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WinFormsApp1.Models;
 using WinFormsApp1.Repositories;
 
@@ -35,6 +36,12 @@ namespace WinFormsApp1.Controllers
         private void SetCurrentUserId(int userId)
         {
             CurrentUser.UserId = userId;
+        }
+        
+        public async Task<List<Account>> GetUserAccounts(int userId)
+        {
+            List<Account> accounts = await userRepository.GetAccountsByUserId(userId);
+            return accounts;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using WinFormsApp1.Interfaces;
@@ -27,6 +28,23 @@ namespace WinFormsApp1.Repositories
                 await DbConnection.CloseSqlConnection();
             }
             return null;
+        }
+        
+        public async Task<List<Account>> GetAccountsByUserId(int userId)
+        {
+            List<Account> accounts = new List<Account>();
+            await DbConnection.OpenSqlConnection();
+            var sqlDataReader = await DbConnection.ExecuteSqlCommand(SQLCommands.GetAccountsByUserIdCommand(userId));
+            do
+            {
+                Account account = new Account();
+                account.AccountId = Convert.ToInt32(sqlDataReader["AccountId"]);
+                account.AccountName = Convert.ToString(sqlDataReader["AccountName"]);
+                account.UserId = Convert.ToInt32(sqlDataReader["UserId"]);
+                accounts.Add(account);
+            } while (await sqlDataReader.ReadAsync());
+            await DbConnection.CloseSqlConnection();
+            return accounts;
         }
 
         public async Task<User> AddNewUserByNameAndPassword(string userName, string password)

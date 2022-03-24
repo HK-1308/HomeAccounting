@@ -16,7 +16,7 @@ namespace WinFormsApp1
 
         private void GoToRegister_Click(object sender, EventArgs e)
         {
-            FormManager.OpenForm(new RegisterForm(),this);
+            FormManager.OpenNewFormWithHidingOldForm(new RegisterForm(),this);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -29,7 +29,7 @@ namespace WinFormsApp1
             
             if (await userController.IsRegistered(textBox1.Text,textBox2.Text))
             {
-                FormManager.OpenForm(new ExpenceChart(),this);
+                FormManager.OpenNewFormWithHidingOldForm(new ExpenceChart(),this);
             }
             else MessageBox.Show(FORGETED_PASSWORD_OR_USERNAME_MESSAGE);
         }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
@@ -25,7 +22,7 @@ namespace WinFormsApp1
 
         private int selectedAccountId;
 
-        private int DEFAULT_INDEX = 0;
+        private const int DEFAULT_INDEX = 0;
 
         private const string MONTHLY_FORMAT = "MMMM yyyy";
 
@@ -174,7 +171,7 @@ namespace WinFormsApp1
 
         private void expensesToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            FormManager.OpenForm(new ExpenceChart(), this);
+            FormManager.OpenNewFormWithClosingOldForm(new ExpenceChart(), this);
         }
 
         private async void accountComboBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -55,7 +55,17 @@ namespace WinFormsApp1.Controllers
             }
             return SummerizedExpenses;
         }
-        
+
+
+
+        public async Task<List<ExpenseForHistory>> CollectInfoForExpensesHistory()
+        {
+            List<ExpenseForHistory> expenseForHistories = new List<ExpenseForHistory>();
+            await expenceRepository.Get
+            return expenseForHistories;
+        }
+
+
         public async Task AddNewExpense(string expenceAmount,int selectedExpenseCategoryId,int selectedAccountId, string note)
         {
             await expenceRepository.AddNewExpense(expenceAmount, selectedExpenseCategoryId, selectedAccountId,note);

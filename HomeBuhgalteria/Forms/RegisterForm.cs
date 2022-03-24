@@ -19,7 +19,7 @@ namespace WinFormsApp1
 
         private void SignIn_Click(object sender, EventArgs e)
         {
-            FormManager.OpenForm(new SignInForm(),this);
+            FormManager.OpenNewFormWithClosingOldForm(new SignInForm(),this);
         }
 
         private void Register_Load(object sender, EventArgs e)
@@ -36,7 +36,7 @@ namespace WinFormsApp1
                 {
                     await userController.AddNewUser(textBox1.Text, textBox2.Text);
                     MessageBox.Show(SUCCESSFUL_REGISTRATION_MESSAGE);
-                    FormManager.OpenForm(new SignInForm(), this);
+                    FormManager.OpenNewFormWithClosingOldForm(new SignInForm(), this);
                 }
                 else
                 {

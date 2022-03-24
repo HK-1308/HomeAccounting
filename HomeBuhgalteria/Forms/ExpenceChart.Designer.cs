@@ -52,6 +52,7 @@ namespace WinFormsApp1
             this.incomesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.incomesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHistoryButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.ExpenseAdding.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -251,7 +252,7 @@ namespace WinFormsApp1
             this.incomesToolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(862, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(808, 24);
             this.menuStrip1.TabIndex = 18;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -262,11 +263,22 @@ namespace WinFormsApp1
             this.incomesToolStripMenuItem2.Text = "Incomes";
             this.incomesToolStripMenuItem2.Click += new System.EventHandler(this.incomesToolStripMenuItem2_Click);
             // 
+            // showHistoryButton
+            // 
+            this.showHistoryButton.Location = new System.Drawing.Point(428, 421);
+            this.showHistoryButton.Name = "showHistoryButton";
+            this.showHistoryButton.Size = new System.Drawing.Size(97, 33);
+            this.showHistoryButton.TabIndex = 19;
+            this.showHistoryButton.Text = "Show history";
+            this.showHistoryButton.UseVisualStyleBackColor = true;
+            this.showHistoryButton.Click += new System.EventHandler(this.showHistoryButton_Click);
+            // 
             // ExpenceChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(862, 473);
+            this.ClientSize = new System.Drawing.Size(808, 472);
+            this.Controls.Add(this.showHistoryButton);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.ExpenseAdding);
@@ -315,5 +327,6 @@ namespace WinFormsApp1
         private System.Windows.Forms.ToolStripMenuItem incomesToolStripMenuItem1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem incomesToolStripMenuItem2;
+        private System.Windows.Forms.Button showHistoryButton;
     }
 }

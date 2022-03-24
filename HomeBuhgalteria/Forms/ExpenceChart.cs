@@ -110,7 +110,7 @@ namespace WinFormsApp1
                 expenseDataTable.Rows.Add(summerizedMonthlyExpenseByCategory.CategoryName,
                     summerizedMonthlyExpenseByCategory.ExpenceSum, $"{summerizedMonthlyExpenseByCategory.ExpencePersent}%");
             }
-            label1.Text = "Monthly expences:";
+            label1.Text = "Monthly expenses:";
         }
 
         private async Task ShowYearlyExpence()
@@ -121,7 +121,7 @@ namespace WinFormsApp1
                 expenseDataTable.Rows.Add(summerizedYearlyExpenseByCategory.CategoryName,
                     summerizedYearlyExpenseByCategory.ExpenceSum, $"{summerizedYearlyExpenseByCategory.ExpencePersent}%");
             }
-            label1.Text = "Yearly expences:";
+            label1.Text = "Yearly expenses:";
         }
 
         private async Task ShowDailyExpence()
@@ -132,7 +132,7 @@ namespace WinFormsApp1
                 expenseDataTable.Rows.Add(summerizedDailyExpenseByCategory.CategoryName,
                     summerizedDailyExpenseByCategory.ExpenceSum, $"{summerizedDailyExpenseByCategory.ExpencePersent}%");
             }
-            label1.Text = "Daily expences:";
+            label1.Text = "Daily expenses:";
 
         }
 
@@ -236,7 +236,12 @@ namespace WinFormsApp1
 
         private void incomesToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            FormManager.OpenForm(new IncomeChart(), this);
+            FormManager.OpenNewFormWithClosingOldForm(new IncomeChart(), this);
+        }
+
+        private void showHistoryButton_Click(object sender, EventArgs e)
+        {
+            FormManager.OpenForm(new IncomeDetails());
         }
     }
 }
